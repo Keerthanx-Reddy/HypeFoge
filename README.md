@@ -52,8 +52,7 @@ cd HypeFoge
 # Start entire stack
 docker-compose up --build
 ```
-- **Frontend**: [http://localhost:3000](http://localhost:3000)
-- **Backend API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+https://forge-preview-43.preview.emergentagent.com/
 
 ---
 
