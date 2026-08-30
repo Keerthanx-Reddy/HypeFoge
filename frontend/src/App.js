@@ -1,15 +1,15 @@
-import "@/App.css";
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
-import { AuthProvider } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import RootRedirect from "@/pages/RootRedirect";
-import Login from "@/pages/Login";
-import Signup from "@/pages/Signup";
-import Dashboard from "@/pages/Dashboard";
-import ProjectDetail from "@/pages/ProjectDetail";
-import VideoDetail from "@/pages/VideoDetail";
-import Health from "@/pages/Health";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import RootRedirect from "./pages/RootRedirect";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import ProjectDetail from "./pages/ProjectDetail";
+import VideoDetail from "./pages/VideoDetail";
+import Health from "./pages/Health";
 
 function App() {
   return (

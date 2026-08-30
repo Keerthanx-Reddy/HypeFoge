@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UploadCloud, Film, X } from "lucide-react";
 import { toast } from "sonner";
-import { API_BASE, formatApiError } from "@/lib/api";
+import { API_BASE, formatApiError } from "../lib/api";
 
 const ACCEPT = ".mp4,.mov,.webm,video/mp4,video/quicktime,video/webm";
 const MAX_BYTES = 200 * 1024 * 1024;

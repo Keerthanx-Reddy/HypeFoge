@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Sparkles, RefreshCw, Instagram, Youtube, Linkedin, Twitter, Music } from "lucide-react";
 import { toast } from "sonner";
-import api, { formatApiError } from "@/lib/api";
+import api, { formatApiError } from "../../lib/api";
 
 const CAPTION_LABEL = {
   provocateur: "Provocateur",

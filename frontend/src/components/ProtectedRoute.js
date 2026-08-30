@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import MeshBackground from "@/components/MeshBackground";
+import { useAuth } from "../contexts/AuthContext";
+import MeshBackground from "../components/MeshBackground";
 
 export default function ProtectedRoute({ children }) {
   const { status } = useAuth();

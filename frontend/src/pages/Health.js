@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, CheckCircle2, XCircle, ShieldCheck, ShieldAlert, Zap, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
-import api, { formatApiError } from "@/lib/api";
-import MeshBackground from "@/components/MeshBackground";
-import TopNav from "@/components/TopNav";
+import api, { formatApiError } from "../lib/api";
+import MeshBackground from "../components/MeshBackground";
+import TopNav from "../components/TopNav";
 
 const SERVICE_META = {
   mongo:    { label: "MongoDB",        note: "Primary datastore" },

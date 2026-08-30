@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "../../components/ui/tooltip";
 
 /**
  * Horizontal timeline showing silence blocks, scene ticks, and dropoff dots.

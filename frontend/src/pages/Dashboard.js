@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Plus, Layers, Film, Sparkles, Clock, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import api, { formatApiError } from "@/lib/api";
-import MeshBackground from "@/components/MeshBackground";
-import TopNav from "@/components/TopNav";
-import CreateProjectModal from "@/components/CreateProjectModal";
-import ForgeCoreOrb from "@/components/canvas/ForgeCoreOrb";
+import api, { formatApiError } from "../lib/api";
+import MeshBackground from "../components/MeshBackground";
+import TopNav from "../components/TopNav";
+import CreateProjectModal from "../components/CreateProjectModal";
+import ForgeCoreOrb from "../components/canvas/ForgeCoreOrb";
 
 const TONE_LABEL = {
   energetic: "Energetic",

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import api, { formatApiError } from "@/lib/api";
+import api, { formatApiError } from "../lib/api";
 
 const PLATFORMS = [
   { id: "instagram_reels", label: "Instagram Reels" },

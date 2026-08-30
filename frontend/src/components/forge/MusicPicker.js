@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, Music4, Check } from "lucide-react";
-import api, { apiFileUrl, formatApiError } from "@/lib/api";
+import api, { apiFileUrl, formatApiError } from "../../lib/api";
 import { toast } from "sonner";
 
 const CATEGORIES = ["energetic", "cinematic", "chill", "hype"];

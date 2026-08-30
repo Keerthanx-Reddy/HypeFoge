@@ -3,20 +3,20 @@ import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Sparkles, Zap, RefreshCw, Info, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
-import api, { apiFileUrl, formatApiError } from "@/lib/api";
-import MeshBackground from "@/components/MeshBackground";
-import TopNav from "@/components/TopNav";
-import ScoreDial from "@/components/analysis/ScoreDial";
-import SubScores from "@/components/analysis/SubScores";
-import TimelineStrip from "@/components/analysis/TimelineStrip";
-import TranscriptView from "@/components/analysis/TranscriptView";
-import DiagnosisAccordion from "@/components/analysis/DiagnosisAccordion";
-import HookCard from "@/components/analysis/HookCard";
-import FormulaModal from "@/components/analysis/FormulaModal";
-import AnalyzeOverlay from "@/components/analysis/AnalyzeOverlay";
-import ForgeStudio from "@/components/forge/ForgeStudio";
-import MarketingPanel from "@/components/marketing/MarketingPanel";
-import VoiceAssistant from "@/components/voice/VoiceAssistant";
+import api, { apiFileUrl, formatApiError } from "../lib/api";
+import MeshBackground from "../components/MeshBackground";
+import TopNav from "../components/TopNav";
+import ScoreDial from "../components/analysis/ScoreDial";
+import SubScores from "../components/analysis/SubScores";
+import TimelineStrip from "../components/analysis/TimelineStrip";
+import TranscriptView from "../components/analysis/TranscriptView";
+import DiagnosisAccordion from "../components/analysis/DiagnosisAccordion";
+import HookCard from "../components/analysis/HookCard";
+import FormulaModal from "../components/analysis/FormulaModal";
+import AnalyzeOverlay from "../components/analysis/AnalyzeOverlay";
+import ForgeStudio from "../components/forge/ForgeStudio";
+import MarketingPanel from "../components/marketing/MarketingPanel";
+import VoiceAssistant from "../components/voice/VoiceAssistant";
 
 const SCORE_METRIC_MAP = {
   hook: "hook_diagnosis",

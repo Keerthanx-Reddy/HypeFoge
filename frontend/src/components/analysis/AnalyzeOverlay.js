@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Loader2, Circle } from "lucide-react";
-import { API_BASE } from "@/lib/api";
-import ForgeCoreOrb from "@/components/canvas/ForgeCoreOrb";
+import { API_BASE } from "../../lib/api";
+import ForgeCoreOrb from "../../components/canvas/ForgeCoreOrb";
 
 const PHASE_LABEL = {
   probe: "Probing metadata",

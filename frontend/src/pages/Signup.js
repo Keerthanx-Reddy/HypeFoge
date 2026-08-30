@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
-import MeshBackground from "@/components/MeshBackground";
+import MeshBackground from "../components/MeshBackground";
 
 export default function Signup() {
   const { signup } = useAuth();

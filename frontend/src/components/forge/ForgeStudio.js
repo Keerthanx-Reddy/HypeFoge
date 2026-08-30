@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, RefreshCw, ArrowRight, Zap } from "lucide-react";
 import { toast } from "sonner";
-import api, { apiFileUrl, formatApiError } from "@/lib/api";
+import api, { apiFileUrl, formatApiError } from "../../lib/api";
 import ForgeControls from "./ForgeControls";
 import ForgePreviewFrame from "./ForgePreviewFrame";
 import ForgeProgress from "./ForgeProgress";

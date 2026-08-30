@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff, X, Loader2, Send, Volume2 } from "lucide-react";
 import { toast } from "sonner";
-import api, { API_BASE, formatApiError } from "@/lib/api";
+import api, { API_BASE, formatApiError } from "../../lib/api";
 
 const RECORD_MS_MAX = 8000;
 

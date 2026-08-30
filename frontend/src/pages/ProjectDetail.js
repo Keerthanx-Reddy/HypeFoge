@@ -3,10 +3,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, Film, HardDrive } from "lucide-react";
 import { toast } from "sonner";
-import api, { apiFileUrl, formatApiError } from "@/lib/api";
-import MeshBackground from "@/components/MeshBackground";
-import TopNav from "@/components/TopNav";
-import VideoUploader from "@/components/VideoUploader";
+import api, { apiFileUrl, formatApiError } from "../lib/api";
+import MeshBackground from "../components/MeshBackground";
+import TopNav from "../components/TopNav";
+import VideoUploader from "../components/VideoUploader";
 
 const PLATFORM_LABEL = {
   instagram_reels: "IG Reels",
