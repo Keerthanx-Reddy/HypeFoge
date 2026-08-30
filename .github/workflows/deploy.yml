@@ -39,7 +39,15 @@ jobs:
           CI: "false"
           REACT_APP_BACKEND_URL: https://forge-preview-43.preview.emergentagent.com
           PUBLIC_URL: /HypeFoge
-        run: npm run build
+        run: |
+          set +e
+          npm run build > build_output.log 2>&1
+          EXIT_CODE=$?
+          echo "### Build Log" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          tail -n 100 build_output.log >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          exit $EXIT_CODE
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
