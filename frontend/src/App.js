@@ -12,9 +12,11 @@ import VideoDetail from "./pages/VideoDetail";
 import Health from "./pages/Health";
 
 function App() {
+  const basename = process.env.NODE_ENV === "production" ? process.env.PUBLIC_URL || "" : "";
+
   return (
     <AuthProvider>
-      <BrowserRouter basename={process.env.PUBLIC_URL || ""}>
+      <BrowserRouter basename={basename}>
         <Routes>
           <Route path="/" element={<RootRedirect />} />
           <Route path="/login" element={<Login />} />
