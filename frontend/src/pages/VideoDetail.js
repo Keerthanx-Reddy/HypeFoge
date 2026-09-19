@@ -18,14 +18,6 @@ import ForgeStudio from "../components/forge/ForgeStudio";
 import MarketingPanel from "../components/marketing/MarketingPanel";
 import VoiceAssistant from "../components/voice/VoiceAssistant";
 
-const SCORE_METRIC_MAP = {
-  hook: "hook_diagnosis",
-  retention: "retention_diagnosis",
-  engagement: "engagement_diagnosis",
-  shareability: "shareability_diagnosis",
-  follower: "follower_diagnosis",
-  overall: "overall_diagnosis",
-};
 
 export default function VideoDetail() {
   const { id } = useParams();
@@ -78,7 +70,7 @@ export default function VideoDetail() {
     })();
   }, [loadVideo, loadAnalysis]);
 
-  const startAnalysis = async () => {
+  const startAnalysis = useCallback(async () => {
     try {
       await api.post(`/videos/${id}/analyze`);
       setAnalyzing(true);
@@ -90,7 +82,7 @@ export default function VideoDetail() {
       }
       toast.error(formatApiError(e, "Could not start analysis"));
     }
-  };
+  }, [id]);
 
   const onAnalyzeDone = async () => {
     setAnalyzing(false);
@@ -162,17 +154,17 @@ export default function VideoDetail() {
       default:
         break;
     }
-  }, []);
+  }, [startAnalysis]);
 
   const src = video ? apiFileUrl(video.original_url) : null;
   const scores = analysis?.scores;
-  const words = analysis?.transcript?.words || [];
+  const words = Array.isArray(analysis?.transcript?.words) ? analysis.transcript.words : [];
   const explanation = analysis?.explanation;
-  const dropoffPoints = explanation?.dropoff_points || [];
-  const silenceIntervals = analysis?.silence_intervals || [];
-  const sceneBoundaries = analysis?.scene_boundaries || [];
+  const dropoffPoints = Array.isArray(explanation?.dropoff_points) ? explanation.dropoff_points : [];
+  const silenceIntervals = Array.isArray(analysis?.silence_intervals) ? analysis.silence_intervals : [];
+  const sceneBoundaries = Array.isArray(analysis?.scene_boundaries) ? analysis.scene_boundaries : [];
   const duration = analysis?.probe?.duration || video?.duration_seconds || 0;
-  const hooks = explanation?.suggested_hooks || [];
+  const hooks = Array.isArray(explanation?.suggested_hooks) ? explanation.suggested_hooks : [];
 
   return (
     <div className="relative min-h-screen grain">

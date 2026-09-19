@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Sparkles, RefreshCw, Instagram, Youtube, Linkedin, Twitter, Music } from "lucide-react";
 import { toast } from "sonner";
@@ -33,7 +33,7 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
   const [performance, setPerformance] = useState([]);
   const [showPerfForm, setShowPerfForm] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const { data } = await api.get(`/videos/${videoId}/marketing`);
       setStrategy(data);
@@ -43,13 +43,20 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
     }
     try {
       const { data } = await api.get(`/videos/${videoId}/performance`);
-      setPerformance(data.entries || []);
+      const entries = Array.isArray(data)
+        ? data
+        : (data && Array.isArray(data.entries) ? data.entries : []);
+      setPerformance(entries);
     } catch { /* ignore */ }
-  };
+  }, [videoId]);
 
   useEffect(() => {
-    (async () => { setLoading(true); await load(); setLoading(false); })();
-  }, [videoId]);
+    (async () => {
+      setLoading(true);
+      await load();
+      setLoading(false);
+    })();
+  }, [load]);
 
   const generate = async () => {
     setGenerating(true);
@@ -68,7 +75,7 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
 
-  const s = strategy?.strategy;
+  const s = strategy?.strategy && typeof strategy.strategy === "object" ? strategy.strategy : null;
 
   return (
     <section className="mt-16 scroll-mt-24" data-testid="marketing-panel" id="marketing">
@@ -91,11 +98,13 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
         ) : null}
       </div>
 
-      {!analysisReady ? (
+      {loading ? (
+        <div className="glass h-48 animate-pulse rounded-2xl" />
+      ) : !analysisReady ? (
         <div className="glass rounded-2xl px-8 py-14 text-center text-hf-slate" data-testid="marketing-locked">
           Analyse the video first — the marketing generator uses transcript, niche, and scores.
         </div>
-      ) : !strategy ? (
+      ) : !s ? (
         <div className="glass relative overflow-hidden rounded-2xl px-8 py-16 text-center" data-testid="marketing-empty">
           <div className="pointer-events-none absolute inset-0 opacity-70" style={{
             background: "radial-gradient(500px 200px at 50% 20%, rgba(138,43,226,0.18), transparent 60%),radial-gradient(500px 200px at 50% 100%, rgba(0,245,255,0.15), transparent 60%)",
@@ -120,7 +129,7 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
               <div className="mt-3">
                 <div className="text-[10px] font-mono uppercase tracking-widest text-hf-slate mb-1">Psychographics</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {(s.target_audience_persona?.psychographics || []).map((p, i) => (
+                  {(Array.isArray(s.target_audience_persona?.psychographics) ? s.target_audience_persona.psychographics : []).map((p, i) => (
                     <span key={i} className="hf-chip !text-hf-cyan !border-hf-cyan/25 !bg-hf-cyan/[0.06]">{p}</span>
                   ))}
                 </div>
@@ -128,7 +137,7 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
               <div className="mt-3">
                 <div className="text-[10px] font-mono uppercase tracking-widest text-hf-slate mb-1">Friction points</div>
                 <ul className="space-y-1 text-xs text-alabaster/80">
-                  {(s.target_audience_persona?.friction_points || []).map((f, i) => (
+                  {(Array.isArray(s.target_audience_persona?.friction_points) ? s.target_audience_persona.friction_points : []).map((f, i) => (
                     <li key={i} className="flex gap-2"><span className="text-hf-violet">·</span>{f}</li>
                   ))}
                 </ul>
@@ -141,10 +150,10 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
                 <span className="text-[11px] text-hf-cyan">{s.series_plan?.theme}</span>
               </div>
               <div className="mt-3 space-y-2">
-                {(s.series_plan?.episodes || []).map((ep) => (
-                  <div key={ep.n} className="rounded-xl border border-white/[0.05] bg-white/[0.02] px-3 py-2">
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-hf-violet">Ep {ep.n}</div>
-                    <div className="mt-0.5 text-sm text-alabaster">{ep.hook}</div>
+                {(Array.isArray(s.series_plan?.episodes) ? s.series_plan.episodes : []).map((ep, i) => (
+                  <div key={ep?.n ?? i} className="rounded-xl border border-white/[0.05] bg-white/[0.02] px-3 py-2">
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-hf-violet">Ep {ep?.n ?? i + 1}</div>
+                    <div className="mt-0.5 text-sm text-alabaster">{ep?.hook}</div>
                   </div>
                 ))}
               </div>
@@ -156,17 +165,17 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
             <div>
               <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate">Post captions</div>
               <div className="grid gap-3 sm:grid-cols-2" data-testid="mkt-captions">
-                {(s.post_captions || []).map((c, i) => (
-                  <div key={c.style} data-testid={`mkt-caption-${c.style}`}
+                {(Array.isArray(s.post_captions) ? s.post_captions : []).map((c, i) => (
+                  <div key={c?.style ?? i} data-testid={`mkt-caption-${c?.style ?? i}`}
                     className="glass rounded-2xl p-4 flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <span className="rounded-full border border-hf-cyan/25 bg-hf-cyan/[0.06] px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-widest text-hf-cyan">
-                        {CAPTION_LABEL[c.style] || c.style}
+                        {CAPTION_LABEL[c?.style] || c?.style}
                       </span>
-                      <button type="button" onClick={() => copy(c.text)} data-testid={`copy-caption-${c.style}`}
+                      <button type="button" onClick={() => copy(c?.text)} data-testid={`copy-caption-${c?.style ?? i}`}
                         className="rounded-full border border-white/[0.08] bg-white/[0.02] p-1.5 text-hf-slate hover:text-alabaster"><Copy className="h-3 w-3" /></button>
                     </div>
-                    <p className="text-sm leading-snug text-alabaster">{c.text}</p>
+                    <p className="text-sm leading-snug text-alabaster">{c?.text}</p>
                   </div>
                 ))}
               </div>
@@ -175,13 +184,13 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
             <div>
               <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate">CTAs per platform</div>
               <div className="flex flex-wrap gap-2" data-testid="mkt-ctas">
-                {(s.ctas || []).map((c) => {
-                  const Icon = PLATFORM_ICONS[c.platform] || Music;
+                {(Array.isArray(s.ctas) ? s.ctas : []).map((c, i) => {
+                  const Icon = PLATFORM_ICONS[c?.platform] || Music;
                   return (
-                    <button key={c.platform} type="button" onClick={() => copy(c.text)} data-testid={`mkt-cta-${c.platform}`}
+                    <button key={c?.platform ?? i} type="button" onClick={() => copy(c?.text)} data-testid={`mkt-cta-${c?.platform ?? i}`}
                       className="glass inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs text-alabaster hover:bg-white/[0.05]">
                       <Icon className="h-3.5 w-3.5 text-hf-cyan" />
-                      <span className="max-w-[200px] truncate">{c.text}</span>
+                      <span className="max-w-[200px] truncate">{c?.text}</span>
                     </button>
                   );
                 })}
@@ -191,7 +200,7 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
             <div>
               <div className="mb-3 text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate">Hook variants</div>
               <div className="space-y-2" data-testid="mkt-hooks">
-                {(s.hook_variants || []).map((h, i) => (
+                {(Array.isArray(s.hook_variants) ? s.hook_variants : []).map((h, i) => (
                   <button key={i} type="button" onClick={() => copy(h)}
                     className="glass block w-full rounded-xl p-3 text-left text-sm text-alabaster hover:bg-white/[0.04]">
                     "{h}"
@@ -205,25 +214,33 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
           <div className="lg:col-span-3 space-y-5">
             <div className="glass rounded-2xl p-5" data-testid="mkt-hashtags">
               <div className="text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate mb-3">Hashtags</div>
-              {["broad", "niche", "branded"].map((grp) => (
-                <div key={grp} className="mb-3">
-                  <div className="text-[9px] font-mono uppercase tracking-widest text-hf-slate mb-1">{grp}</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(s.hashtags?.[grp] || []).map((h) => (
-                      <button key={h} type="button" onClick={() => copy(`#${h}`)} data-testid={`hashtag-${grp}-${h}`}
-                        className="rounded-full border border-white/[0.08] bg-white/[0.02] px-2.5 py-1 text-[11px] text-alabaster hover:border-hf-cyan/40 hover:text-hf-cyan">
-                        #{h}
-                      </button>
-                    ))}
+              {["broad", "niche", "branded"].map((grp) => {
+                const raw = s.hashtags?.[grp];
+                const list = Array.isArray(raw)
+                  ? raw
+                  : typeof raw === "string"
+                  ? raw.split(/[\s,]+/).map((t) => t.replace(/^#/, "")).filter(Boolean)
+                  : [];
+                return (
+                  <div key={grp} className="mb-3">
+                    <div className="text-[9px] font-mono uppercase tracking-widest text-hf-slate mb-1">{grp}</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {list.map((h, idx) => (
+                        <button key={idx} type="button" onClick={() => copy(`#${h}`)} data-testid={`hashtag-${grp}-${h}`}
+                          className="rounded-full border border-white/[0.08] bg-white/[0.02] px-2.5 py-1 text-[11px] text-alabaster hover:border-hf-cyan/40 hover:text-hf-cyan">
+                          #{h}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="glass rounded-2xl p-5" data-testid="mkt-keywords">
               <div className="text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate mb-2">Keywords</div>
               <div className="flex flex-wrap gap-1.5">
-                {(s.recommended_keywords || []).map((k, i) => (
+                {(Array.isArray(s.recommended_keywords) ? s.recommended_keywords : []).map((k, i) => (
                   <span key={i} className="hf-chip">{k}</span>
                 ))}
               </div>
@@ -232,10 +249,14 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
             <div className="glass rounded-2xl p-5" data-testid="mkt-cadence">
               <div className="text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate mb-2">Posting cadence</div>
               <ul className="space-y-1 text-xs">
-                {Object.entries(s.posting_cadence || {}).map(([p, v]) => (
+                {Object.entries(
+                  s.posting_cadence && typeof s.posting_cadence === "object" && !Array.isArray(s.posting_cadence)
+                    ? s.posting_cadence
+                    : {}
+                ).map(([p, v]) => (
                   <li key={p} className="flex items-start justify-between gap-3 border-t border-white/[0.05] pt-1 first:border-0 first:pt-0">
-                    <span className="text-hf-slate font-mono uppercase tracking-widest text-[10px] flex-none">{p.replace("_", " ")}</span>
-                    <span className="text-alabaster text-right">{v}</span>
+                    <span className="text-hf-slate font-mono uppercase tracking-widest text-[10px] flex-none">{String(p).replace("_", " ")}</span>
+                    <span className="text-alabaster text-right">{String(v)}</span>
                   </li>
                 ))}
               </ul>
@@ -244,11 +265,11 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
             <div className="glass rounded-2xl p-5" data-testid="mkt-repurpose">
               <div className="text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate mb-2">Repurposing angles</div>
               <div className="space-y-2">
-                {(s.repurposing_angles || []).map((r, i) => (
+                {(Array.isArray(s.repurposing_angles) ? s.repurposing_angles : []).map((r, i) => (
                   <div key={i} className="rounded-xl border border-white/[0.05] bg-white/[0.02] p-3">
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-hf-cyan">{r.platform}</div>
-                    <div className="mt-0.5 text-xs text-alabaster">{r.angle}</div>
-                    <div className="mt-0.5 text-[11px] text-hf-slate">{r.reformat_notes}</div>
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-hf-cyan">{r?.platform}</div>
+                    <div className="mt-0.5 text-xs text-alabaster">{r?.angle}</div>
+                    <div className="mt-0.5 text-[11px] text-hf-slate">{r?.reformat_notes}</div>
                   </div>
                 ))}
               </div>
@@ -260,7 +281,7 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
             <PerformanceLogger
               videoId={videoId}
               entries={performance}
-              onAdd={(e) => setPerformance((prev) => [e, ...prev])}
+              onAdd={(e) => setPerformance((prev) => [e, ...(Array.isArray(prev) ? prev : [])])}
               open={showPerfForm}
               onToggle={() => setShowPerfForm((v) => !v)}
             />
@@ -271,7 +292,8 @@ export default function MarketingPanel({ videoId, analysisReady, controlRef }) {
   );
 }
 
-function PerformanceLogger({ videoId, entries, onAdd, open, onToggle }) {
+function PerformanceLogger({ videoId, entries = [], onAdd, open, onToggle }) {
+  const safeEntries = Array.isArray(entries) ? entries : [];
   const [platform, setPlatform] = useState("instagram_reels");
   const [postedAt, setPostedAt] = useState(new Date().toISOString().slice(0, 10));
   const [views, setViews] = useState("");
@@ -310,7 +332,7 @@ function PerformanceLogger({ videoId, entries, onAdd, open, onToggle }) {
         className="flex w-full items-center justify-between text-left">
         <div>
           <div className="text-[10px] font-mono uppercase tracking-[0.24em] text-hf-slate">Feedback loop</div>
-          <div className="mt-1 text-sm text-alabaster">Log post performance ({entries.length} entries)</div>
+          <div className="mt-1 text-sm text-alabaster">Log post performance ({safeEntries.length} entries)</div>
         </div>
         <span className="text-hf-slate text-xs">{open ? "−" : "+"}</span>
       </button>
@@ -338,7 +360,7 @@ function PerformanceLogger({ videoId, entries, onAdd, open, onToggle }) {
           </motion.form>
         )}
       </AnimatePresence>
-      {entries.length > 0 && (
+      {safeEntries.length > 0 && (
         <div className="mt-4 overflow-hidden rounded-xl border border-white/[0.05]">
           <table className="w-full text-left text-xs" data-testid="perf-table">
             <thead className="bg-white/[0.03] font-mono uppercase tracking-widest text-[10px] text-hf-slate">
@@ -347,14 +369,14 @@ function PerformanceLogger({ videoId, entries, onAdd, open, onToggle }) {
               </tr>
             </thead>
             <tbody>
-              {entries.map((e) => (
-                <tr key={e.id} className="border-t border-white/[0.05]">
-                  <td className="px-3 py-2 text-hf-cyan">{e.platform}</td>
-                  <td className="px-3 py-2 font-mono text-hf-slate">{(e.posted_at || "").slice(0, 10)}</td>
-                  <td className="px-3 py-2 font-mono text-alabaster">{e.views}</td>
-                  <td className="px-3 py-2 font-mono text-alabaster">{e.likes}</td>
-                  <td className="px-3 py-2 font-mono text-alabaster">{e.comments}</td>
-                  <td className="px-3 py-2 font-mono text-alabaster">{e.saves}</td>
+              {safeEntries.map((e, idx) => (
+                <tr key={e?.id ?? idx} className="border-t border-white/[0.05]">
+                  <td className="px-3 py-2 text-hf-cyan">{e?.platform}</td>
+                  <td className="px-3 py-2 font-mono text-hf-slate">{(e?.posted_at || "").slice(0, 10)}</td>
+                  <td className="px-3 py-2 font-mono text-alabaster">{e?.views}</td>
+                  <td className="px-3 py-2 font-mono text-alabaster">{e?.likes}</td>
+                  <td className="px-3 py-2 font-mono text-alabaster">{e?.comments}</td>
+                  <td className="px-3 py-2 font-mono text-alabaster">{e?.saves}</td>
                 </tr>
               ))}
             </tbody>
